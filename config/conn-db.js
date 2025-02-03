@@ -1,25 +1,15 @@
+const { Sequelize } = require('sequelize')
 require('dotenv').config()
-const mysql = require('mysql2/promise')
+console.log('Heheh');
 
-const ENV = process.env.APP_ENV || "local"
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: 'mysql',
+    logging: false
+})
 
-const config = {
-    local: {
-        host: process.env.DB_HOST_LOCAL,
-        user: process.env.DB_USER_LOCAL,
-        password: process.env.DB_PASSWORD_LOCAL,
-        database: process.env.DB_NAME_LOCAL,
-    },
-    development: {
-        host: process.env.DB_HOST_DEV,
-        user: process.env.DB_USER_DEV,
-        password: process.env.DB_PASSWORD_DEV,
-        database: process.env.DB_NAME_DEV,
-    }
-}
+sequelize.authenticate()
+    .then(() => console.log('MySQL Connected...'))
+    .catch(err => console.error('Error connecting to MySQL:', err))
 
-const pool = mysql.createPool(config[ENV]);
-
-console.log(`Connected to ${ENV} database`);
-
-module.exports = pool
+module.exports = sequelize

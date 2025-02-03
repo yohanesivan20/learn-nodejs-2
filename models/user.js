@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize')
-const sequelize = require('./config/conn-db')
+const sequelize = require('../config/conn-db')
 
 const User = sequelize.define('User', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true},
@@ -8,7 +8,7 @@ const User = sequelize.define('User', {
     password: {type: DataTypes.STRING, allowNull: false}
 }, {
     timestamps: true,
-    tableName: users
+    tableName: 'users'
 })
 
 module.exports = User

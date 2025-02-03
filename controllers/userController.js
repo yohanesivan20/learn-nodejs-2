@@ -1,7 +1,7 @@
-const User = require('./models/userModel')
+const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const response = require('./helper/responseHelper')
+const response = require('../helper/responseHelper')
 
 exports.registerUser = async (req, res) => {
     const {name, email, password} = req.body
@@ -24,8 +24,17 @@ exports.registerUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
     const {email, password} = req.body
+    
     try {
-
+        const user = await User.findOne({ email })
+        
+        if (!user) response(400, null, 'Invalid email or password', res)
+        
+        const passwordMatch = await bcrypt.compare(password, user.password)
+        if (!passwordMatch) response(400, null, 'Invalid email or password', res)
+        
+        const token = jwt.sign({id : user.id}, process.env.JWT_SECRET, { expiresIn: '1h'})
+        response(200, token, 'Login successfully!', res)
     } catch (error) {
         response(500, null, 'Terjadi kesalahan pada jaringan : ' . error.message, res)
     }
